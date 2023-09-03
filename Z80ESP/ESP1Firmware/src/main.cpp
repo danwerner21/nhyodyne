@@ -45,6 +45,9 @@ void setup()
     pinMode(OUTDATA, OUTPUT);
     pinMode(INDATA, INPUT);
 
+    digitalWrite(BUSY, HIGH);
+    digitalWrite(READY, LOW);
+
     pinMode(BUSY, OUTPUT);
     pinMode(READY, OUTPUT);
 
@@ -52,9 +55,6 @@ void setup()
 
     digitalWrite(OUTCLK, HIGH);
     digitalWrite(OUTDATA, LOW);
-
-    digitalWrite(BUSY, LOW);
-    digitalWrite(READY, LOW);
 
     pinMode(WR, INPUT);
     pinMode(RD, INPUT);
@@ -64,6 +64,8 @@ void setup()
     espMouse.initialize();
     espWifi.initialize();
     serial.initialize();
+
+    digitalWrite(BUSY, LOW);
 }
 
 void loop()
@@ -299,6 +301,7 @@ void processOpcode(uint8_t b)
         queueByte('P');
         queueByte('3');
         queueByte('2');
+        queueByte('B');
         queueByte('V');
         queueByte('1');
         break;

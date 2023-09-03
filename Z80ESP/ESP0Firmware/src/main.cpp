@@ -70,17 +70,14 @@ void setup()
   //  delay(200); // experienced crashes without this delay!
   //  disableCore1WDT();
 
-    initialize();
-    PS2Controller.begin(PS2Preset::KeyboardPort0);
-
-    graphics.initialize(&Terminal);
-    serial.initialize();
-    sound.initialize(&soundGenerator);
-
     pinMode(OUTCLK, OUTPUT);
     pinMode(INCLK, OUTPUT);
     pinMode(OUTDATA, OUTPUT);
     pinMode(INDATA, INPUT);
+
+    digitalWrite(BUSY, HIGH);
+    digitalWrite(READY, LOW);
+    digitalWrite(SPARE, LOW);
 
     pinMode(BUSY, OUTPUT);
     pinMode(READY, OUTPUT);
@@ -91,15 +88,20 @@ void setup()
     digitalWrite(OUTCLK, HIGH);
     digitalWrite(OUTDATA, LOW);
 
-    digitalWrite(BUSY, LOW);
-    digitalWrite(READY, LOW);
-    digitalWrite(SPARE, LOW);
+    initialize();
+    PS2Controller.begin(PS2Preset::KeyboardPort0);
+
+    graphics.initialize(&Terminal);
+    serial.initialize();
+    sound.initialize(&soundGenerator);
 
     xTaskCreatePinnedToCore(attachInterruptTask, "Attach Interrupt Task", 1000, NULL, 6, NULL, 0);
     popByte();
     popByte();
     popByte();
     popByte();
+
+    digitalWrite(BUSY, LOW);
 }
 
 void attachInterruptTask(void *pvParameters)
@@ -491,6 +493,7 @@ void processOpcode(uint8_t b)
         queueByte('P');
         queueByte('3');
         queueByte('2');
+        queueByte('A');
         queueByte('V');
         queueByte('1');
         break;
